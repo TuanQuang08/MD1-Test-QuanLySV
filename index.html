@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        input {
+            width: 30%;
+            height: 20px;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid black;
+        }
+
+        button {
+            width: 80px;
+            height: 43px;
+            padding: 10px;
+            cursor: pointer;
+        }
+
+        table {
+            width: 70%;
+            text-align: left;
+        }
+
+        #mytrtext {
+            border: 2px solid #da1235;
+            color: blue;
+        }
+
+        th, td {
+            text-align: center;
+        }
+
+        td {
+            padding: 5px;
+        }
+
+        table td:first-child {
+            width: 40px;
+            text-align: center;
+        }
+
+        #buttonCreate {
+            border-radius: 20px;
+            color: red;
+            background-color: greenyellow;
+            border: 1px solid black;
+        }
+
+        #buttonSearch {
+            border-radius: 20px;
+            color: red;
+            background-color: deepskyblue;
+            border: 1px solid black;
+        }
+
+        .errortext {
+            color: red;
+            margin: 0 10px;
+        }
+    </style>
+</head>
+
+<body onload="showListStudent()">
+
+<h2>Quản Lý Sinh Viên</h2>
+<input type="text" id="addStudent" placeholder="The Name Student">
+<button type="button" onclick="addStudent(),showListStudent()" id="buttonCreate">Create</button>
+<p id="error1" class="errortext"></p>
+<br>
+<input type="text" id="searchStudent" placeholder="Search Student">
+<button type="button" onclick="searchStudent()" id="buttonSearch">Search</button>
+<p id="error2" class="errortext"></p>
+<br><br><br>
+<table id="tableMain" border="1">
+
+</table>
+
+</body>
+<script>
+    let arr = ['Ngân', 'Mến', 'Quang'];
+
+    function getEle(id) {
+        return document.getElementById(id);
+    }
+
+    function addData(data, index, count) {
+        data += "<tr>";
+        data += "<td>" + count + "</td>";
+        data += "<td>" + arr[index] + "</td>";
+        data += "<td><button type='button' value='" + index + "' onclick='updateStudent(this.value)'>" + "Edit" + "</button></td>";
+        data += "<td><button type='button' value='" + index + "' onclick='deleteStudent(this.value)'>" + "Delete" + "</button></td>";
+        data += "</tr>";
+        return data;
+    }
+
+    function addStudent() {
+        let inputStudent = getEle('addStudent').value;
+        if (inputStudent == '') {
+            getEle('error1').innerHTML = "The name is required! Please try again!";
+        } else {
+            let flag = checkStudent(inputStudent.toLowerCase());
+            if(!flag){
+                arr.push(inputStudent);
+                let data = "";
+                addData(data, arr.length - 1, arr.length);
+                getEle('tableMain').innerHTML += data;
+                getEle('error1').innerHTML = "Create Student Success!";
+            }else{
+                alert("The name is existed! Please try again!")
+            }
+        }
+    }
+
+    function searchStudent() {
+        let name = getEle('searchStudent').value;
+        if (name == '') {
+            getEle('error2').innerHTML = "The name is required! Please try again!";
+        } else {
+            let flag = false;
+            let data = "<tr id='mytrtext'>"
+                + "<th colspan='4'>STUDENT MANAGE</th></tr>"
+                + "<th>STT</th>"
+                + "<th>NAME</th>"
+                + "<th>EDIT</th>"
+                + "<th>DELETE</th>";
+            for (let value in arr) {
+                if (arr[value].toLowerCase() === name.toLowerCase()) {
+                    data = addData(data, value, 1);
+                    flag = true;
+                }
+            }
+            if (flag) {
+                getEle('tableMain').innerHTML = data;
+            } else {
+                getEle('error2').innerHTML = "Name is not on the list!";
+            }
+        }
+    }
+
+    function showListStudent() {
+        let data = "<tr id='mytrtext'>"
+            + "<th colspan='4'>STUDENT MANAGE</th></tr>"
+            + "<th>STT</th>"
+            + "<th>NAME</th>"
+            + "<th>EDIT</th>"
+            + "<th>DELETE</th>";
+        let count = 1;
+        for (let i = 0; i < arr.length; i++) {
+            data = addData(data, i, count);
+            count++;
+        }
+        getEle('tableMain').innerHTML = data;
+    }
+
+    function updateStudent(index) {
+        do {
+            let inputStudent = prompt("Nhập dữ liệu muốn thay đổi: ");
+            if (inputStudent == '' || inputStudent == null) {
+                alert("The name is required! Please try again!");
+            } else {
+                let flag2 = checkStudent(inputStudent.toLowerCase());
+                if(!flag2){
+                    arr[index] = inputStudent;
+                    break;
+                }else{
+                    alert("The name is existed! Please try again!")
+                }
+            }
+        } while (true);
+        showListStudent();
+    }
+
+    function deleteStudent(index) {
+        let deleteStudent = "Are you sure delete? OK -> Delete | Cancel -> No";
+        if (confirm(deleteStudent)){
+            arr.splice(index, 1);
+            showListStudent();
+            alert("Delete Student success!");
+        }else{
+            alert("Just Don't delete it!");
+        }
+    }
+    function checkStudent(name) {
+        for(let value of arr){
+            if(value.toLowerCase() == name){
+                return true;
+            }
+        }
+        return false;
+    }
+</script>
+</html>
